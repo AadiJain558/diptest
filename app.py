@@ -1,15 +1,4 @@
-"""Streamlit app: single-image depth estimation and approximate 3-D reconstruction.
 
-Essential upgrades over the original version:
-- Selectable Depth Anything V2 Small and DPT-Hybrid-MiDaS models.
-- Optional foreground extraction with rembg.
-- DIP filters can be applied sequentially before depth estimation.
-- Spatially distributed 2-D point sampling (rather than sampling a flattened image).
-- Selectable depth-map colour maps and depth-map download.
-
-The reconstruction is an approximate coloured point cloud, not a complete watertight
-3-D object or a metric reconstruction.
-"""
 
 from __future__ import annotations
 
@@ -60,9 +49,7 @@ DEPTH_COLOR_MAPS = [
 ]
 
 
-# -----------------------------------------------------------------------------
-# Image helpers and caching
-# -----------------------------------------------------------------------------
+
 
 
 def _hash_image(image: Image.Image) -> bytes:
@@ -166,9 +153,7 @@ def remove_background(image: Image.Image) -> Image.Image:
     return Image.open(io.BytesIO(result)).convert("RGBA")
 
 
-# -----------------------------------------------------------------------------
-# DIP processing
-# -----------------------------------------------------------------------------
+
 
 
 def get_filter_controls() -> Dict[str, float]:
@@ -280,9 +265,7 @@ def apply_dip_filters(
     return results
 
 
-# -----------------------------------------------------------------------------
-# Depth-map display and point-cloud generation
-# -----------------------------------------------------------------------------
+
 
 
 def colorize_depth(depth: np.ndarray, color_map: str) -> Image.Image:
@@ -443,9 +426,7 @@ def point_cloud_to_ply(
     return (header + "\n".join(rows) + "\n").encode("utf-8")
 
 
-# -----------------------------------------------------------------------------
-# Streamlit application
-# -----------------------------------------------------------------------------
+
 
 
 def main() -> None:
@@ -539,8 +520,7 @@ def main() -> None:
         )
         st.dataframe(metadata, use_container_width=True, hide_index=True)
 
-    # Keep the original RGB image for point colours. A separately processed image
-    # is sent to the depth model, so DIP preprocessing does not destroy RGB colours.
+    
     foreground_mask: Optional[np.ndarray] = None
     depth_input = image
     background_removed_image: Optional[Image.Image] = None
@@ -558,7 +538,6 @@ def main() -> None:
 
         rgba = np.asarray(background_removed_image, dtype=np.uint8)
         foreground_mask = rgba[..., 3] > 16
-        # Transparent pixels are composited onto white for the depth model.
         white_background = Image.new("RGBA", background_removed_image.size, (255, 255, 255, 255))
         composited = Image.alpha_composite(white_background, background_removed_image)
         depth_input = composited.convert("RGB")

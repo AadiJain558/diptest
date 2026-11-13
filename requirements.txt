@@ -1,0 +1,12 @@
+# CPU-only PyTorch build is appropriate for Streamlit Community Cloud.
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+
+streamlit>=1.40,<2.0
+torch>=2.2,<3.0
+transformers>=4.45,<5.0
+numpy>=1.26,<3.0
+pandas>=2.1,<4.0
+Pillow>=10.0
+plotly>=5.20
+scikit-image>=0.22
